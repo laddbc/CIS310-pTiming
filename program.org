@@ -1,0 +1,143 @@
+#+STARTUP: showall
+#+TITLE: Program: BitMap using Catch2 Testing Framework
+#+SUBTITLE: CIS 310: Operating Systems
+#+AUTHOR: Brian C. Ladd
+#+DATE: Fall 2019
+#+OPTIONS: toc:nil H:1 num:0
+
+* Overview
+** Background
+
+   Consider an /abstract/ view of a *hard disk drive*: the drive is
+   large (compared to RAM) and presents a /linear/ sequence of fixed-size
+   /sectors/, [fn:1] indexed as if they were in an array (with the index
+   translated to a physical location on the drive by a lower level of
+   abstraction [fn:2]). One task of the operating system is to keep track
+   of which sectors are available to store new files /but/ fetching any
+   given sector to check if it is free is expensive. How can *Boolean*
+   information about a *large number* of *slow to fetch* sectors be
+   tracked efficiently?
+
+   A /bitmap/ is an efficient, *auxiliary* data structure for tracking
+   used and free elements in a linearly-mapped data structure. The bitmap
+   is an array of *bits*, one per element (sector). If bit n in the
+   bitmap is 1, than element n is occupied; if bit n in the bitmap is 0,
+   the corresponding element is free. The bitmap is memory efficient
+   since only one bit is used per tracked element.
+
+** Programming a Bitmap in C++
+   C++ models the underlying computer hardware in many ways, not the
+   least of which is in the size of declared variables. On a 32-bit
+   machine =int= variables are typically 4-bytes. Since modern
+   computers have *byte addressable* memories, the smallest unit of
+   allocation for a variable is a *byte* (8 bits). This means
+   implementation of a bitmap involves translating from the index of a
+   bit (some integer) into the index of the corresponding  byte in an
+   array of bytes and offset in that byte where that bit can be
+   found.
+
+   In this short programming project, students will extend the
+   =BitMap= class (a concrete (rather than abstract) class that does
+   almost nothing) into a the =WorkingBitMap= class. The working
+   bitmap will be able to check, set, and unset individual bits; it
+   will also be able to find the smallest index for an unset bit in
+   the bitmap.
+
+* Class Interface
+  The =BitMap= interface is completely =virtual= (except for the
+  constructor; a virtual constructor makes no sense). Thus the
+  most-derived definition of a method is the one called through a
+  =BitMap= reference or pointer.
+
+    - =BitMap(unsigned int entry_count)= :: construct a new bit map
+      with the given number of entries (bits); initially all bits are
+      unset.
+    - =~BitMap()= :: clean up.
+    - =sizeInBits()= :: returns the total number of entries (bits) in
+      the bit map.
+    - =sizeInBytes()= :: returns the size in bytes of memory allocated
+      by the constructor.
+    - =get(unsigned int index)= :: returns true if the index is within
+      range and the bit is set to 1; it returns false if the index is
+      out of range or the bit is unset.
+    - =set()= :: set (to 1) ALL bits in the bit map.
+    - =set(unsigned int index)= :: set (to 1) the bit with the given
+      index.
+    - =unset()= :: unset (to 0) ALL bits in the bit map.
+    - =unset(unsigned int index)= :: unset (to 0) the bit with the
+      given index.
+    - =get_unset_index()= :: return the lowest valid index that refers
+      to an unset (0) bit, if there is one; return =nbit= otherwise.
+
+* Catch 2
+
+The testing code, =executables/testBitMap.cpp= and
+=tests/catchTests.cpp=, uses the /Catch 2/ testing framework, a single
+header-file based test-driven development framework for
+C++. =testBitMap.cpp= has /Catch2/ provide a =main= program that finds
+all of the test cases. =catchTests.cpp= uses the /Catch2/ macros to
+define the correct behavior of a =WorkingBitMap=. The generated main
+function runs all of the tests, producing a useful report when a test
+fails.
+
+The tests /document/ how the class should function so you should read
+and understand them.
+
+=testBitMap.cpp= uses compiler directives to initialize the test
+object, named =b=, to point to a =BitMap= unless the =WorkingBitMap=
+header is included (the =WorkingBitMap.h= guard value is used to
+detect the inclusion of the class definition). When =WorkingBitMap= is
+written, the include for the header should be uncommented; the rest of
+the code should automatically test that class.
+
+When run with =BitMap=, the test code fails, giving a report that
+almost every =SECTION= in the =TEST_CASE= failed with information on
+the failed assertion. The only section that passes is the check that
+all bits are unset on construction; this works because
+=BitMap::get(unsigned int)= unconditionally returns =false= and that
+looks correct at that point of the testing.
+
+** Adding a Test
+The =sizeInBytes= method is /not/ tested. You must add an appropriate
+test for it. Note that the correct size in bytes is the /smallest/
+integral number of bytes that contains the =sizeInBits= value.
+
+* Design Considerations
+** =WorkingBitMap= is the name of the class to be built.
+*** It must publicly extend =BitMap=
+*** The header file is expected to be named =WorkingBitMap.h= (though you could edit the line that is to be uncommented in =testBitMap.cpp=).
+*** It's header file must use =WORKINGBITMAP_H= as its guard (or, at least, define that symbol). This is because of the way the test code is written.
+** The working bit map /must/ store one *bit* per entry.
+*** Not one =bool=, not one =char=, not one =int=. One bit.
+*** Allocation (using =new=) can be done by the /byte/ (8 bits). Easiest type to hold eight bits: =unsigned char=.
+*** You are to allocate as few bytes as possible to hold all the bits. Unless the number of entries happens to be a multiple of 8, there will be spare (unused) bits in the last byte in the bit map. Their values should never be returned (but they can change if that makes your code easier to write or understand).
+*** Because the memory is dynamically allocated, the use of one bit per entry is not enforced by the test code and will be graded by eye. Since this is the point of the assignment, expect catastrophic loss of points if this requirement is ignored.
+** An array of 11 =int= is allocated with
+#+BEGIN_SRC c++
+  int * A = new int[11];
+#+END_SRC
+*** The returned value here is a pointer at =int=.
+*** Array notation works with the pointer: =A[10]= is the last entry allocated.
+*** The number of entries in the array can be a variable.
+*** To delete the allocated memory, use =delete[] A= (the [] properly deletes the whole array).
+
+* Deliverables/Submission Method
+** Implement =WorkingBitMap= (with =.cpp=/=.h= pair).
+** Get it to pass all the given tests.
+** Add a test for =sizeInBytes= (and make sure you pass).
+** Push the changes back up to GitHub.
+
+* Footnotes
+
+[fn:1] Does this description of an array of sectors remind anyone else
+of an array of =Node= objects that are allocated at need? Just wondering.
+
+[fn:2] Many (all?) drives these days use Integrated Drive Electronics
+or IDE. This presents /virtual/ hard drives to the computer with a set
+of platters, each with the same number of tracks with each track
+having the same number of sectors. The actual hard drive probably has
+tracks with more or fewer sectors depending on their physical radius.
+
+Then the operating system's /driver/ code translates a
+platter-track-sector address to a sector number address so that the
+whole hard drive looks like an array of sectors.
