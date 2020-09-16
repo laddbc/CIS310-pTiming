@@ -8,8 +8,11 @@ class BitMap {
   BitMap(unsigned int number_of_entries);
   virtual ~BitMap();
 
-  // return the number of entries in the bit map
-  virtual unsigned int entry_count();
+  // return the number of bits in the bit map
+  virtual unsigned int sizeInBits();
+
+  // return the number of bytes that were allocated
+  virtual unsigned int sizeInBytes();
 
   // unset all entries in the bitmap
   virtual void unset();

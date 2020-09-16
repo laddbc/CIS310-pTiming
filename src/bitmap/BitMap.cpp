@@ -21,7 +21,16 @@ BitMap::~BitMap() {
  *
  * @return the number of entries the BitMap was initialized with
  */
-unsigned int BitMap::entry_count() {
+unsigned int BitMap::sizeInBits() {
+  return 0; // broken for any non-zero size
+}
+
+/**
+ * Query the number of bytes allocated by this BitMap.
+ *
+ * @return the number of bytes the BitMap allocated
+ */
+unsigned int BitMap::sizeInBytes() {
   return 0; // broken for any non-zero size
 }
 

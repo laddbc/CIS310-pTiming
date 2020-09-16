@@ -4,7 +4,7 @@
 # list to determine what files to continue the make with (the
 # submodules themselves).
 EXECUTABLE_MODULES := executables
-MODULES := bitmap
+MODULES := bitmap tests
 
 
 include $(patsubst %,$(SOURCE)/%/module.mk,$(MODULES))
