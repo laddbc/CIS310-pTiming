@@ -50,7 +50,7 @@ SOURCE = src
 #   -Wall      report all possible warnings
 #   -Werror    treat any warning as an error and stop the compile
 #   -g         include debug information in the .o and executable files
-CFLAGS = -std=c++17 -O0 -Wall -Werror -g
+CFLAGS = -std=c++17 -O0 -Wall
 
 # ASMFLAGS - flags for the NASM assembler
 #   -fbin    output format flat 16-bit binary (bootloader, DOS-like)

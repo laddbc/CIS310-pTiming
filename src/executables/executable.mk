@@ -1,4 +1,3 @@
-# @file module.mk
 #
 # The subsystem (module) make include file. Adds all local .[cs] files
 # to the source list (SRC) and the current directory to the BUILDDIRS list.

@@ -5,7 +5,7 @@
 #+AUTHOR: Brian C. Ladd
 #+DATE: Fall 2019
 
-DUE 20200923:1240
+DUE 20201106:1240
 COMMITTED:
 
 *REASONS TO STOP ASSESSMENT*
@@ -45,7 +45,7 @@ Documentation
       - else if (<boolean>) follows
       - ends with { (if necessary)
 - README
-  - Problem Statement
+  - Add a Problem Statement
   - Testing Criteria
     - Explain what data was used (include the data in the repo)
       - With each data set, give the expected output
@@ -54,15 +54,14 @@ Documentation
     - If a test takes a long time, indicate that
   - Compiling and Running Instructions
     - Include what directory the user should be in for commands
-
+  - INCLUDE DATA FOR SOME COMPUTER.
 
 Design
-- The Skeleton Code and catch.hpp are provided.
-  - Does not break (or repairs) the working Makefile
-  - Does not change version of Catch2 used by program
-- Uses separate compilation units
-  - Separate =.h= and =.cpp= file for each class/subsystem
-  - Uses the =MODULES= make variables to build the executable
+- Skeleton Code has most of the design.
+- Context Switch
+  - One loop on either branch of the fork()
+  - Timing on only one side, timing a round-trip write/read of one char.
+  - Setting affinity on the child process.
 - Good design practice:
   MODULES
   - Modules cohesive at a high level of abstraction.
@@ -91,11 +90,8 @@ Implementation
   - Regular commits with clear, concise commit messages
   - Note when tests begin to pass or begin (again?) to fail.
 - Never use the =use ...= statement in =.h= files
-- Added an appropriate test for set(i) on either side of a byte boundary.
-  - And passed it.
-- =WorkingBitmap= passes all of the tests
-- The main testing program is not modified
-
+- Proper error messages if fork fails.
+- Proper calculation of single operation running time.
 
 Aesthetics
 - Everything is okay
